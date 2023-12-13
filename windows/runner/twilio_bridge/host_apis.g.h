@@ -55,6 +55,12 @@ template<class T> class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
+
+enum class MakeCallStatus {
+  success = 0,
+  anotherCall = 1,
+  fail = 2
+};
 // Generated interface from Pigeon that represents a handler of messages from Flutter.
 class TwilioBridgeHostApi {
  public:
@@ -63,6 +69,12 @@ class TwilioBridgeHostApi {
   virtual ~TwilioBridgeHostApi() {}
   virtual ErrorOr<std::string> GetLanguage() = 0;
   virtual void SendFromNative(std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual void Initialize(std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void Deinitialize(std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void ToggleAudioRoute(
+    bool to_speaker,
+    std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual void MakeCall(std::function<void(ErrorOr<MakeCallStatus> reply)> result) = 0;
 
   // The codec used by TwilioBridgeHostApi.
   static const flutter::StandardMessageCodec& GetCodec();

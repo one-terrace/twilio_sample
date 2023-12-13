@@ -42,10 +42,26 @@ class FlutterError (
   val details: Any? = null
 ) : Throwable()
 
+enum class MakeCallStatus(val raw: Int) {
+  SUCCESS(0),
+  ANOTHERCALL(1),
+  FAIL(2);
+
+  companion object {
+    fun ofRaw(raw: Int): MakeCallStatus? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface TwilioBridgeHostApi {
   fun getLanguage(): String
   fun sendFromNative(callback: (Result<Boolean>) -> Unit)
+  fun initialize(callback: (Result<Unit>) -> Unit)
+  fun deinitialize(callback: (Result<Unit>) -> Unit)
+  fun toggleAudioRoute(toSpeaker: Boolean, callback: (Result<Boolean>) -> Unit)
+  fun makeCall(callback: (Result<MakeCallStatus>) -> Unit)
 
   companion object {
     /** The codec used by TwilioBridgeHostApi. */
@@ -82,6 +98,78 @@ interface TwilioBridgeHostApi {
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.initialize", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.initialize() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.deinitialize", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.deinitialize() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.toggleAudioRoute", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val toSpeakerArg = args[0] as Boolean
+            api.toggleAudioRoute(toSpeakerArg) { result: Result<Boolean> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.makeCall() { result: Result<MakeCallStatus> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data!!.raw))
               }
             }
           }

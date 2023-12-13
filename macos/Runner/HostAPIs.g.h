@@ -10,6 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, PGNMakeCallStatus) {
+  PGNMakeCallStatusSuccess = 0,
+  PGNMakeCallStatusAnotherCall = 1,
+  PGNMakeCallStatusFail = 2,
+};
+
+/// Wrapper for PGNMakeCallStatus to allow for nullability.
+@interface PGNMakeCallStatusBox : NSObject
+@property(nonatomic, assign) PGNMakeCallStatus value;
+- (instancetype)initWithValue:(PGNMakeCallStatus)value;
+@end
+
 
 /// The codec used by PGNTwilioBridgeHostApi.
 NSObject<FlutterMessageCodec> *PGNTwilioBridgeHostApiGetCodec(void);
@@ -18,6 +30,10 @@ NSObject<FlutterMessageCodec> *PGNTwilioBridgeHostApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSString *)getLanguageWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)sendFromNativeWithCompletion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)initializeWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)deinitializeWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)toggleAudioRouteToSpeaker:(BOOL)toSpeaker completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)makeCallWithCompletion:(void (^)(PGNPGNMakeCallStatusBox *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpPGNTwilioBridgeHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PGNTwilioBridgeHostApi> *_Nullable api);

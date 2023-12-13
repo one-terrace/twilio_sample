@@ -3,6 +3,12 @@ import 'package:pigeon/pigeon.dart';
 const path = 'twilio_bridge/host_apis.g';
 const mobilePath = 'twilio_bridge/HostAPIs';
 
+enum MakeCallStatus {
+  success,
+  anotherCall,
+  fail,
+}
+
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/twilio_bridge/host_apis.g.dart',
   dartOptions: DartOptions(),
@@ -27,4 +33,16 @@ abstract class TwilioBridgeHostApi {
 
   @async
   bool sendFromNative();
+
+  @async
+  void initialize();
+
+  @async
+  void deinitialize();
+
+  @async
+  bool toggleAudioRoute(bool toSpeaker);
+
+  @async
+  MakeCallStatus makeCall();
 }

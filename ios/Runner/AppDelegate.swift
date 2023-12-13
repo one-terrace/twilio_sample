@@ -7,11 +7,11 @@ import Flutter
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
-    let controller = window?.rootViewController as! FlutterViewController
-    let api = TwilioBridgeHostApiImplementation()
-    TwilioBridgeHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
-
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+      GeneratedPluginRegistrant.register(with: self)
+      let controller = window?.rootViewController as! FlutterViewController
+      let api = TwilioBridgeImplementation(binaryMessenger: controller.binaryMessenger)
+      TwilioBridgeHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
+      
+      return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

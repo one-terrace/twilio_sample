@@ -27,6 +27,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
+@implementation PGNMakeCallStatusBox
+- (instancetype)initWithValue:(PGNMakeCallStatus)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 NSObject<FlutterMessageCodec> *PGNTwilioBridgeHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   sSharedObject = [FlutterStandardMessageCodec sharedInstance];
@@ -61,6 +71,77 @@ void SetUpPGNTwilioBridgeHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSO
       NSCAssert([api respondsToSelector:@selector(sendFromNativeWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(sendFromNativeWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api sendFromNativeWithCompletion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.initialize"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(initializeWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(initializeWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api initializeWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.deinitialize"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(deinitializeWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(deinitializeWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api deinitializeWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.toggleAudioRoute"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(toggleAudioRouteToSpeaker:completion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(toggleAudioRouteToSpeaker:completion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        BOOL arg_toSpeaker = [GetNullableObjectAtIndex(args, 0) boolValue];
+        [api toggleAudioRouteToSpeaker:arg_toSpeaker completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(makeCallWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(makeCallWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api makeCallWithCompletion:^(PGNPGNMakeCallStatusBox *_Nullable enumValue, FlutterError *_Nullable error) {
+          NSNumber *output = enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
           callback(wrapResult(output, error));
         }];
       }];

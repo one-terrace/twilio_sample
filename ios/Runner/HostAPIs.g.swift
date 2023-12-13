@@ -38,10 +38,20 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+enum MakeCallStatus: Int {
+  case success = 0
+  case anotherCall = 1
+  case fail = 2
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol TwilioBridgeHostApi {
   func getLanguage() throws -> String
   func sendFromNative(completion: @escaping (Result<Bool, Error>) -> Void)
+  func initialize(completion: @escaping (Result<Void, Error>) -> Void)
+  func deinitialize(completion: @escaping (Result<Void, Error>) -> Void)
+  func toggleAudioRoute(toSpeaker: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
+  func makeCall(completion: @escaping (Result<MakeCallStatus, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -76,6 +86,68 @@ class TwilioBridgeHostApiSetup {
       }
     } else {
       sendFromNativeChannel.setMessageHandler(nil)
+    }
+    let initializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.initialize", binaryMessenger: binaryMessenger)
+    if let api = api {
+      initializeChannel.setMessageHandler { _, reply in
+        api.initialize() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      initializeChannel.setMessageHandler(nil)
+    }
+    let deinitializeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.deinitialize", binaryMessenger: binaryMessenger)
+    if let api = api {
+      deinitializeChannel.setMessageHandler { _, reply in
+        api.deinitialize() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      deinitializeChannel.setMessageHandler(nil)
+    }
+    let toggleAudioRouteChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.toggleAudioRoute", binaryMessenger: binaryMessenger)
+    if let api = api {
+      toggleAudioRouteChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let toSpeakerArg = args[0] as! Bool
+        api.toggleAudioRoute(toSpeaker: toSpeakerArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      toggleAudioRouteChannel.setMessageHandler(nil)
+    }
+    let makeCallChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall", binaryMessenger: binaryMessenger)
+    if let api = api {
+      makeCallChannel.setMessageHandler { _, reply in
+        api.makeCall() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res.rawValue))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      makeCallChannel.setMessageHandler(nil)
     }
   }
 }

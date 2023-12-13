@@ -55,6 +55,18 @@ public class HostAPIs {
     return errorList;
   }
 
+  public enum MakeCallStatus {
+    SUCCESS(0),
+    ANOTHER_CALL(1),
+    FAIL(2);
+
+    final int index;
+
+    private MakeCallStatus(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -78,6 +90,14 @@ public class HostAPIs {
     String getLanguage();
 
     void sendFromNative(@NonNull Result<Boolean> result);
+
+    void initialize(@NonNull Result<Void> result);
+
+    void deinitialize(@NonNull Result<Void> result);
+
+    void toggleAudioRoute(@NonNull Boolean toSpeaker, @NonNull Result<Boolean> result);
+
+    void makeCall(@NonNull Result<MakeCallStatus> result);
 
     /** The codec used by TwilioBridgeHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -129,6 +149,116 @@ public class HostAPIs {
                     };
 
                 api.sendFromNative(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.initialize", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.initialize(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.deinitialize", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.deinitialize(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.toggleAudioRoute", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Boolean toSpeakerArg = (Boolean) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.toggleAudioRoute(toSpeakerArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<MakeCallStatus> resultCallback =
+                    new Result<MakeCallStatus>() {
+                      public void success(MakeCallStatus result) {
+                        wrapped.add(0, result.index);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.makeCall(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

@@ -1,4 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:twilio_sample/src/twilio_bridge/flutter_apis.g.dart';
 import 'package:twilio_sample/src/twilio_bridge/host_apis.g.dart';
 
 void main() {
@@ -12,13 +16,34 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
   final TwilioBridgeHostApi _api = TwilioBridgeHostApi();
   String language = '';
+  String token = '';
+  late TextEditingController textController;
+
+  void initNotification() async {
+    Permission.notification.request();
+    await Firebase.initializeApp();
+
+    await FirebaseMessaging.instance.requestPermission(provisional: true);
+
+    final token = await FirebaseMessaging.instance.getToken();
+
+    setState(() {
+      textController.text = token ?? '';
+    });
+  }
 
   @override
   void initState() {
+    textController = TextEditingController();
+
     super.initState();
+    TwilioBridgeFlutterApi.setup(this);
+    initNotification();
+
+    _api.initialize();
 
     _api.getLanguage().then((value) {
       setState(() {
@@ -31,11 +56,48 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void onTwilioError(Object error) {
+    debugPrint(error.toString());
+  }
+
+  @override
+  void dispose() {
+    _api.deinitialize();
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Came from $language'),
+        body: SizedBox(
+          width: double.maxFinite,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text('Came from $language'),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: textController,
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () {
+                    _api.makeCall().then((value) {
+                      debugPrint('${value}aung myin');
+                    }).onError((error, stackTrace) {
+                      debugPrint(error.toString());
+                    });
+                  },
+                  child: const Text('Call me'),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

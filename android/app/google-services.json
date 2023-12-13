@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "337186350281",
+    "project_id": "twilio-feasiblity",
+    "storage_bucket": "twilio-feasiblity.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337186350281:android:7683c0ed675e516fae1918",
+        "android_client_info": {
+          "package_name": "com.example.twilio_sample"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYOCf8wiTuKBccGJscMOKcv5OynjbM6Es"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
