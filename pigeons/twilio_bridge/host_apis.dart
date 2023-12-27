@@ -16,7 +16,7 @@ enum MakeCallStatus {
   cppHeaderOut: 'windows/runner/twilio_bridge/host_apis.g.h',
   cppSourceOut: 'windows/runner/twilio_bridge/host_apis.g.cpp',
   kotlinOut: 'android/app/src/main/kotlin/com/example/twilio_sample/twilio_bridge/HostAPIs.g.kt',
-  kotlinOptions: KotlinOptions(),
+  kotlinOptions: KotlinOptions(errorClassName: 'HostAPIError'),
   javaOut: 'android/app/src/main/java/io/flutter/plugins/twilio_bridge/HostAPIs.java',
   javaOptions: JavaOptions(),
   swiftOut: 'ios/Runner/HostAPIs.g.swift',

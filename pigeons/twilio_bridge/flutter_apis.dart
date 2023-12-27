@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
   cppHeaderOut: 'windows/runner/twilio_bridge/flutter_apis.g.h',
   cppSourceOut: 'windows/runner/twilio_bridge/flutter_apis.g.cpp',
   kotlinOut: 'android/app/src/main/kotlin/com/example/twilio_sample/twilio_bridge/FlutterAPIs.g.kt',
-  kotlinOptions: KotlinOptions(),
   javaOut: 'android/app/src/main/java/io/flutter/plugins/twilio_bridge/FlutterAPIs.java',
   javaOptions: JavaOptions(),
   swiftOut: 'ios/Runner/FlutterAPIs.g.swift',
