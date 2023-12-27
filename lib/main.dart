@@ -20,7 +20,7 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
   final TwilioBridgeHostApi _api = TwilioBridgeHostApi();
   String language = '';
   String token = '';
-  late TextEditingController textController;
+  late TextEditingController _fcmTokenTxtFieldController;
 
   void initNotification() async {
     Permission.notification.request();
@@ -31,13 +31,13 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
     final token = await FirebaseMessaging.instance.getToken();
 
     setState(() {
-      textController.text = token ?? '';
+      _fcmTokenTxtFieldController.text = token ?? '';
     });
   }
 
   @override
   void initState() {
-    textController = TextEditingController();
+    _fcmTokenTxtFieldController = TextEditingController();
 
     super.initState();
     TwilioBridgeFlutterApi.setup(this);
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
   @override
   void dispose() {
     _api.deinitialize();
-    textController.dispose();
+    _fcmTokenTxtFieldController.dispose();
     super.dispose();
   }
 
@@ -82,11 +82,11 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
                 Text('Came from $language'),
                 const SizedBox(height: 16),
                 TextField(
-                  controller: textController,
+                  controller: _fcmTokenTxtFieldController,
                 ),
                 const SizedBox(height: 16),
-                InkWell(
-                  onTap: () {
+                ElevatedButton(
+                  onPressed: () {
                     _api.makeCall().then((value) {
                       debugPrint('${value}aung myin');
                     }).onError((error, stackTrace) {

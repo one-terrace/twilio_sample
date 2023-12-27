@@ -18,6 +18,7 @@ class TwilioBridgeImplementation: NSObject {
     var userInitiatedDisconnect: Bool = false
     var ringtonePlayer: AVAudioPlayer? = nil
     var incomingPushCompletionCallback: (() -> Void)?
+    var isInitialized: Bool = false
     
     var flutterApis: TwilioBridgeFlutterApi?
     
@@ -62,6 +63,8 @@ extension TwilioBridgeImplementation: TwilioBridgeHostApi {
             defaultLogger.log(params: params)
         }
         
+        self.isInitialized = true
+        
         completion(.success(()))
     }
     
@@ -69,6 +72,8 @@ extension TwilioBridgeImplementation: TwilioBridgeHostApi {
         if let provider = callKitProvider {
             provider.invalidate()
         }
+        
+        self.isInitialized = false
         
         completion(.success(()))
     }

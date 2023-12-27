@@ -51,14 +51,22 @@ extension TwilioBridgeImplementation: CXProviderDelegate {
     
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         NSLog("provider:performAnswerCallAction:")
-        
-        performAnswerVoiceCall(uuid: action.callUUID) { success in
+        performVoiceCall(uuid: action.callUUID, client: "") { success in
             if success {
-                NSLog("performAnswerVoiceCall() successful")
+                NSLog("performVoiceCall() successful")
+                provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
             } else {
-                NSLog("performAnswerVoiceCall() failed")
+                NSLog("performVoiceCall() failed")
             }
         }
+        
+//        performAnswerVoiceCall(uuid: action.callUUID) { success in
+//            if success {
+//                NSLog("performAnswerVoiceCall() successful")
+//            } else {
+//                NSLog("performAnswerVoiceCall() failed")
+//            }
+//        }
         
         action.fulfill()
     }
@@ -175,7 +183,7 @@ extension TwilioBridgeImplementation: CXProviderDelegate {
     
     func performVoiceCall(uuid: UUID, client: String?, completionHandler: @escaping (Bool) -> Void) {
         let connectOptions = ConnectOptions(accessToken: Constants.twilio.accessToken) {[weak self] builder in
-            builder.params = [Constants.twilio.twimlParamTo: self?.outgoingCallId ?? ""]
+            builder.params = [Constants.twilio.twimlParamTo: "alice"]
             builder.uuid = uuid
         }
         
