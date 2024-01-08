@@ -71,4 +71,8 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.twilio:voice-android:5.7.2'
+    implementation "com.twilio:audioswitch:1.1.8"
+    implementation 'com.karumi:dexter:4.2.0'
+    implementation 'com.google.firebase:firebase-messaging:23.4.0'
 }
