@@ -138,9 +138,11 @@ void SetUpPGNTwilioBridgeHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSO
         binaryMessenger:binaryMessenger
         codec:PGNTwilioBridgeHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(makeCallWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(makeCallWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(makeCallToken:completion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(makeCallToken:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api makeCallWithCompletion:^(PGNPGNMakeCallStatusBox *_Nullable enumValue, FlutterError *_Nullable error) {
+        NSArray *args = message;
+        NSString *arg_token = GetNullableObjectAtIndex(args, 0);
+        [api makeCallToken:arg_token completion:^(PGNPGNMakeCallStatusBox *_Nullable enumValue, FlutterError *_Nullable error) {
           NSNumber *output = enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
           callback(wrapResult(output, error));
         }];

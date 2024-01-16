@@ -97,7 +97,7 @@ public class HostAPIs {
 
     void toggleAudioRoute(@NonNull Boolean toSpeaker, @NonNull Result<Boolean> result);
 
-    void makeCall(@NonNull Result<MakeCallStatus> result);
+    void makeCall(@Nullable String token, @NonNull Result<MakeCallStatus> result);
 
     /** The codec used by TwilioBridgeHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -245,6 +245,8 @@ public class HostAPIs {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String tokenArg = (String) args.get(0);
                 Result<MakeCallStatus> resultCallback =
                     new Result<MakeCallStatus>() {
                       public void success(MakeCallStatus result) {
@@ -258,7 +260,7 @@ public class HostAPIs {
                       }
                     };
 
-                api.makeCall(resultCallback);
+                api.makeCall(tokenArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

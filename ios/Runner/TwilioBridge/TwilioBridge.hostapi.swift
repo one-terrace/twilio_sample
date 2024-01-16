@@ -19,6 +19,7 @@ class TwilioBridgeImplementation: NSObject {
     var ringtonePlayer: AVAudioPlayer? = nil
     var incomingPushCompletionCallback: (() -> Void)?
     var isInitialized: Bool = false
+    var accessToken: String? = nil
     
     var flutterApis: TwilioBridgeFlutterApi?
     
@@ -131,7 +132,14 @@ extension TwilioBridgeImplementation: TwilioBridgeHostApi {
         audioDevice.block()
     }
     
-    func makeCall(completion: @escaping (Result<MakeCallStatus, Error>) -> Void) {
+    func makeCall(token: String?, completion: @escaping (Result<MakeCallStatus, Error>) -> Void) {
+        guard token != nil else {
+            completion(.failure(FlutterError(code: "token-undefined", message: "", details: "")))
+            return
+        }
+                       
+        self.accessToken = token
+        
         guard activeCall == nil else {
             userInitiatedDisconnect = true
             completion(.success(.anotherCall))

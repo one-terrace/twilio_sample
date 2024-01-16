@@ -158,7 +158,10 @@ void TwilioBridgeHostApi::SetUp(
     if (api != nullptr) {
       channel->SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
         try {
-          api->MakeCall([reply](ErrorOr<MakeCallStatus>&& output) {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_token_arg = args.at(0);
+          const auto* token_arg = std::get_if<std::string>(&encodable_token_arg);
+          api->MakeCall(token_arg, [reply](ErrorOr<MakeCallStatus>&& output) {
             if (output.has_error()) {
               reply(WrapError(output.error()));
               return;

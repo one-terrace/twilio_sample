@@ -5,6 +5,7 @@ import PushKit
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
     var twilioBridgeApi: TwilioBridgeImplementation?
+    private let voipQueue = DispatchQueue(label: "voip_queue", qos: .userInteractive)
     
     override func application(
     _ application: UIApplication,
@@ -36,7 +37,7 @@ import PushKit
     }
 
     private func voipRegistration() {
-        let voipRegistry = PKPushRegistry(queue: nil)
+        let voipRegistry = PKPushRegistry(queue: voipQueue)
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = [PKPushType.voIP]
     }
@@ -67,11 +68,11 @@ extension AppDelegate : PKPushRegistryDelegate {
     }
     
     private func handleReceiveIncomingPush(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType) {
-        print(self.twilioBridgeApi != nil, "eee")
-        
         self.initialize()
         
         guard type == .voIP, self.twilioBridgeApi != nil else { return }
+        
+        self.twilioBridgeApi!.accessToken = payload.dictionaryPayload["token"] as? String
         
         if self.twilioBridgeApi?.isInitialized != true {
             self.twilioBridgeApi?.initialize {[weak self] _ in
@@ -80,11 +81,11 @@ extension AppDelegate : PKPushRegistryDelegate {
         }
         
         self.reportCall(from: "dog")
-        
-        print(payload.dictionaryPayload, type, "haha")
     }
     
     private func reportCall(from: String) {
-        self.twilioBridgeApi?.reportIncomingCall(from: from, uuid: UUID())
+        DispatchQueue.main.sync {
+            self.twilioBridgeApi?.reportIncomingCall(from: from, uuid: UUID())
+        }
     }
 }
