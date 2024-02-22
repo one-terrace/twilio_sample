@@ -51,7 +51,7 @@ protocol TwilioBridgeHostApi {
   func initialize(completion: @escaping (Result<Void, Error>) -> Void)
   func deinitialize(completion: @escaping (Result<Void, Error>) -> Void)
   func toggleAudioRoute(toSpeaker: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
-  func makeCall(completion: @escaping (Result<MakeCallStatus, Error>) -> Void)
+  func makeCall(token: String?, completion: @escaping (Result<MakeCallStatus, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -136,8 +136,10 @@ class TwilioBridgeHostApiSetup {
     }
     let makeCallChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall", binaryMessenger: binaryMessenger)
     if let api = api {
-      makeCallChannel.setMessageHandler { _, reply in
-        api.makeCall() { result in
+      makeCallChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let tokenArg: String? = nilOrValue(args[0])
+        api.makeCall(token: tokenArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res.rawValue))

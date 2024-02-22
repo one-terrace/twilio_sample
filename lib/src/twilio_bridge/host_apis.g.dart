@@ -156,7 +156,7 @@ class TwilioBridgeHostApi {
     }
   }
 
-  Future<MakeCallStatus> makeCall() async {
+  Future<MakeCallStatus> makeCall(String? token) async {
     const String __pigeon_channelName = 'dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall';
     final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -164,7 +164,7 @@ class TwilioBridgeHostApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(null) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[token]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {

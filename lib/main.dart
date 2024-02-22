@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:twilio_sample/src/twilio_bridge/flutter_apis.g.dart';
 import 'package:twilio_sample/src/twilio_bridge/host_apis.g.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -86,12 +89,18 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    _api.makeCall().then((value) {
-                      debugPrint('${value}aung myin');
-                    }).onError((error, stackTrace) {
-                      debugPrint(error.toString());
-                    });
+                  onPressed: () async {
+                    final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
+                    Map<String, dynamic> body = jsonDecode(response.body);
+                    final token = body["token"];
+
+                    if (response.statusCode == 200) {
+                      _api.makeCall(token).then((value) {
+                        debugPrint('${value}aung myin');
+                      }).onError((error, stackTrace) {
+                        debugPrint(error.toString());
+                      });
+                    }
                   },
                   child: const Text('Call me'),
                 )

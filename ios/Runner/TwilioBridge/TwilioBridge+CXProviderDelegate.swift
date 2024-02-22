@@ -182,8 +182,10 @@ extension TwilioBridgeImplementation: CXProviderDelegate {
     }
     
     func performVoiceCall(uuid: UUID, client: String?, completionHandler: @escaping (Bool) -> Void) {
-        let connectOptions = ConnectOptions(accessToken: Constants.twilio.accessToken) {[weak self] builder in
-            builder.params = [Constants.twilio.twimlParamTo: "alice"]
+        let connectOptions = ConnectOptions(accessToken: self.accessToken!) {[weak self] builder in
+            builder.params = [
+                Constants.twilio.twimlParamTo: "alice"
+            ]
             builder.uuid = uuid
         }
         

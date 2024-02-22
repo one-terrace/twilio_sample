@@ -61,7 +61,7 @@ interface TwilioBridgeHostApi {
   fun initialize(callback: (Result<Unit>) -> Unit)
   fun deinitialize(callback: (Result<Unit>) -> Unit)
   fun toggleAudioRoute(toSpeaker: Boolean, callback: (Result<Boolean>) -> Unit)
-  fun makeCall(callback: (Result<MakeCallStatus>) -> Unit)
+  fun makeCall(token: String?, callback: (Result<MakeCallStatus>) -> Unit)
 
   companion object {
     /** The codec used by TwilioBridgeHostApi. */
@@ -162,8 +162,10 @@ interface TwilioBridgeHostApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.makeCall", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            api.makeCall() { result: Result<MakeCallStatus> ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val tokenArg = args[0] as String?
+            api.makeCall(tokenArg) { result: Result<MakeCallStatus> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

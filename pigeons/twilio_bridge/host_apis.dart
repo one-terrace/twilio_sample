@@ -44,5 +44,5 @@ abstract class TwilioBridgeHostApi {
   bool toggleAudioRoute(bool toSpeaker);
 
   @async
-  MakeCallStatus makeCall();
+  MakeCallStatus makeCall(String? token);
 }

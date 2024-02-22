@@ -30,7 +30,7 @@ extension TwilioBridgeImplementation: PushKitEventDelegate {
         /*
          * Perform registration if a new device token is detected.
          */
-        TwilioVoiceSDK.register(accessToken: Constants.twilio.accessToken, deviceToken: cachedDeviceToken) { error in
+        TwilioVoiceSDK.register(accessToken: self.accessToken!, deviceToken: cachedDeviceToken) { error in
             if let error = error {
                 NSLog("An error occurred while registering: \(error.localizedDescription)")
             } else {
@@ -74,7 +74,7 @@ extension TwilioBridgeImplementation: PushKitEventDelegate {
     func credentialsInvalidated() {
         guard let deviceToken = UserDefaults.standard.data(forKey: Constants.twilio.kCachedDeviceToken) else { return }
         
-        TwilioVoiceSDK.unregister(accessToken: Constants.twilio.accessToken, deviceToken: deviceToken) { error in
+        TwilioVoiceSDK.unregister(accessToken: self.accessToken!, deviceToken: deviceToken) { error in
             if let error = error {
                 NSLog("An error occurred while unregistering: \(error.localizedDescription)")
             } else {

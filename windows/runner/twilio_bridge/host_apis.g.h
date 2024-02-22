@@ -74,7 +74,9 @@ class TwilioBridgeHostApi {
   virtual void ToggleAudioRoute(
     bool to_speaker,
     std::function<void(ErrorOr<bool> reply)> result) = 0;
-  virtual void MakeCall(std::function<void(ErrorOr<MakeCallStatus> reply)> result) = 0;
+  virtual void MakeCall(
+    const std::string* token,
+    std::function<void(ErrorOr<MakeCallStatus> reply)> result) = 0;
 
   // The codec used by TwilioBridgeHostApi.
   static const flutter::StandardMessageCodec& GetCodec();
