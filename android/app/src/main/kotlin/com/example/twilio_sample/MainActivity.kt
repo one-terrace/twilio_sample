@@ -340,7 +340,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     callback(Result.success(true));
   }
 
-  override fun makeCall(callback: (Result<MakeCallStatus>) -> Unit) {
+  override fun makeCall(token: String?, callback: (Result<MakeCallStatus>) -> Unit) {
     permissionHandle()
   }
 
