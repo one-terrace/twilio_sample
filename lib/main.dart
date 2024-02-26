@@ -22,7 +22,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
   final TwilioBridgeHostApi _api = TwilioBridgeHostApi();
   String language = '';
-  String token = '';
+  String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJ2aWRlb0NhbGwtMTcwODk1OTc5OSIsImdyYW50cyI6eyJ2aWRlbyI6eyJyb29tIjoiRmx1dHRlciBDaGF0Um9vbSJ9fSwiaWF0IjoxNzA4OTU5Nzk5LCJleHAiOjE3MDg5NjMzOTksImlzcyI6InZpZGVvQ2FsbCIsInN1YiI6IlNLNmZiNTIzMmVhMzgxMmUzOWQ2ZmUzYjMwYTdiNWRhZTAifQ.WGlSCbs6EPFEhp2AkNhpXKYn8xVuZcsVqhy6ye_MD_I';
   late TextEditingController _fcmTokenTxtFieldController;
 
   void initNotification() async {
@@ -90,17 +90,18 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () async {
-                    final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
-                    Map<String, dynamic> body = jsonDecode(response.body);
-                    final token = body["token"];
-
-                    if (response.statusCode == 200) {
+//                     final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
+//                     Map<String, dynamic> body = jsonDecode(response.body);
+//                     final token = body["token"];
+//
+//                     if (response.statusCode == 200) {
+//
+//                     }
                       _api.makeCall(token).then((value) {
                         debugPrint('${value}aung myin');
                       }).onError((error, stackTrace) {
                         debugPrint(error.toString());
                       });
-                    }
                   },
                   child: const Text('Call me'),
                 )

@@ -34,6 +34,7 @@ import com.twilio.voice.ConnectOptions
 import com.twilio.voice.RegistrationException
 import com.twilio.voice.RegistrationListener
 import com.twilio.voice.Voice
+
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import java.util.Locale
@@ -69,7 +70,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     private var ACTION_DTMF_SEND: String = "ACTION_DTMF_SEND"
     private var INCOMING_CALL_NOTIFICATION_ID: String = "INCOMING_CALL_NOTIFICATION_ID"
     private var DTMF: String = "DTMF"
-    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzZlYmUwYTI3MGE2ODI5YmI1NmRiNmRlYTM2ZmU1N2RhLTE3MDQ3MjczMTciLCJncmFudHMiOnsiaWRlbnRpdHkiOiJTdW5ueUplbm92YVJhbGVpZ2giLCJ2b2ljZSI6eyJpbmNvbWluZyI6eyJhbGxvdyI6dHJ1ZX0sIm91dGdvaW5nIjp7ImFwcGxpY2F0aW9uX3NpZCI6IkFQNDZhNTk3ZjM1OGY4MzM3NTIxODJhMGU5YmExMzg4MDkifX19LCJpYXQiOjE3MDQ3MjczMTcsImV4cCI6MTcwNDczMDkxNywiaXNzIjoiU0s2ZWJlMGEyNzBhNjgyOWJiNTZkYjZkZWEzNmZlNTdkYSIsInN1YiI6IkFDMzhiZmYzZDk1ZDM0MjZkZTIyOWUzNmY5NDY5M2M3MTMifQ.QJY2dqXzp6CcjjjGD8Vp73l7gm7v8mbn7h4KWtmkuFM"
+    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJ2aWRlb0NhbGwtMTcwODk1OTc5OSIsImdyYW50cyI6eyJ2aWRlbyI6eyJyb29tIjoiRmx1dHRlciBDaGF0Um9vbSJ9fSwiaWF0IjoxNzA4OTU5Nzk5LCJleHAiOjE3MDg5NjMzOTksImlzcyI6InZpZGVvQ2FsbCIsInN1YiI6IlNLNmZiNTIzMmVhMzgxMmUzOWQ2ZmUzYjMwYTdiNWRhZTAifQ.WGlSCbs6EPFEhp2AkNhpXKYn8xVuZcsVqhy6ye_MD_I"
   }
   override fun getLanguage(): String {
     return "Android"
@@ -79,6 +80,29 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     callback(Result.success(true))
   }
 
+    fun joinCall(accessToken: String, to: String) {
+//      val connectOptions = ConnectOptions.Builder(accessToken)
+//        .to(to)
+//        .build()
+      Log.i("JoiningCall", to)
+      params.put("to", to)
+      val connectOptions: ConnectOptions = ConnectOptions.Builder(Companion.accessToken)
+        .params(params)
+        .build()
+//        .params(params)
+      activeCall = Voice.connect(context, connectOptions, callListener)
+
+//      call = Voice.connect(this, connectOptions, object : Call.Listener() {
+//        override fun onConnected(call: Call) {
+//          android.util.Log.i(TAG, "onConnected: ", call)
+//        }
+//
+//        override fun onConnectFailure(call: Call, error: CallException) {
+//          android.util.Log.i(TAG, "onConnectionFailed: ")
+//        }
+//
+//      })
+    }
   private fun registerReceiver() {
     if (!isReceiverRegistered) {
       val intentFilter = IntentFilter()
@@ -329,6 +353,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     audioSwitch = AudioSwitch(this.context)
     registerReceiver()
     callback(Result.success(Unit));
+//    registerCallInvites()
   }
 
   override fun deinitialize(callback: (Result<Unit>) -> Unit) {
@@ -365,7 +390,8 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     print(permissionApprove)
     if(permissionApprove) {
       print("Accept Permission")
-      registerCallInvites()
+//      registerCallInvites()
+      joinCall(accessToken, "+14122754751")
 
     } else {
       print("Denied Permission")
