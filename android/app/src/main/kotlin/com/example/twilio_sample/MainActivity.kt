@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.telecom.DisconnectCause
 import android.util.Log
 import android.widget.Chronometer
+import android.widget.Toast
 import androidx.annotation.NonNull
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
@@ -26,6 +27,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.twilio.audioswitch.AudioDevice
 import com.twilio.audioswitch.AudioSwitch
 import com.twilio.voice.Call
 import com.twilio.voice.CallException
@@ -34,7 +36,6 @@ import com.twilio.voice.ConnectOptions
 import com.twilio.voice.RegistrationException
 import com.twilio.voice.RegistrationListener
 import com.twilio.voice.Voice
-
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import java.util.Locale
@@ -46,7 +47,6 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
   private var voiceBroadcastReceiver: VoiceBroadcastReceiver? = null
   var callListener: Call.Listener = callListener()
   private var isReceiverRegistered = false
-
   // Empty HashMap, never populated for the Quickstart
   var params: HashMap<String, String> = HashMap()
   private var chronometer: Chronometer? = null
@@ -54,9 +54,8 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
   private var activeCallInvite: CallInvite? = null
   private var activeCall: Call? = null
   private var activeCallNotificationId = 0
-
+  private var audioSwitch: AudioSwitch = AudioSwitch(context)
   companion object {
-    private lateinit var audioSwitch: AudioSwitch
     private var permissionApprove = false
     private var ACTION_OUTGOING_CALL: String = "ACTION_OUTGOING_CALL"
     private var ACTION_DISCONNECT_CALL: String = "ACTION_DISCONNECT_CALL"
@@ -70,7 +69,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     private var ACTION_DTMF_SEND: String = "ACTION_DTMF_SEND"
     private var INCOMING_CALL_NOTIFICATION_ID: String = "INCOMING_CALL_NOTIFICATION_ID"
     private var DTMF: String = "DTMF"
-    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJ2aWRlb0NhbGwtMTcwODk1OTc5OSIsImdyYW50cyI6eyJ2aWRlbyI6eyJyb29tIjoiRmx1dHRlciBDaGF0Um9vbSJ9fSwiaWF0IjoxNzA4OTU5Nzk5LCJleHAiOjE3MDg5NjMzOTksImlzcyI6InZpZGVvQ2FsbCIsInN1YiI6IlNLNmZiNTIzMmVhMzgxMmUzOWQ2ZmUzYjMwYTdiNWRhZTAifQ.WGlSCbs6EPFEhp2AkNhpXKYn8xVuZcsVqhy6ye_MD_I"
+    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzZlYmUwYTI3MGE2ODI5YmI1NmRiNmRlYTM2ZmU1N2RhLTE3MDkwMTYyNDYiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJXb25kZXJmdWxVbHlzc2VzTmV2aXMiLCJ2b2ljZSI6eyJpbmNvbWluZyI6eyJhbGxvdyI6dHJ1ZX0sIm91dGdvaW5nIjp7ImFwcGxpY2F0aW9uX3NpZCI6IkFQNDZhNTk3ZjM1OGY4MzM3NTIxODJhMGU5YmExMzg4MDkifX19LCJpYXQiOjE3MDkwMTYyNDYsImV4cCI6MTcwOTAxOTg0NiwiaXNzIjoiU0s2ZWJlMGEyNzBhNjgyOWJiNTZkYjZkZWEzNmZlNTdkYSIsInN1YiI6IkFDMzhiZmYzZDk1ZDM0MjZkZTIyOWUzNmY5NDY5M2M3MTMifQ.r5N9xgzl3aM8PB_ZQBUDPQj2Ol0V3PfHuhifw0q9MHQ"
   }
   override fun getLanguage(): String {
     return "Android"
@@ -81,6 +80,14 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
   }
 
     fun joinCall(accessToken: String, to: String) {
+      audioSwitch.start { audioDevices, audioDevice ->
+        Toast.makeText(context, audioDevice?.name.toString(), Toast.LENGTH_SHORT).show();
+      }
+      val selectedDevice: AudioDevice? = audioSwitch.selectedAudioDevice
+      val availableAudioDevices: List<AudioDevice> = audioSwitch.availableAudioDevices
+      Log.d("asdf", availableAudioDevices.toString())
+      audioSwitch.selectDevice(availableAudioDevices[0])
+      audioSwitch.activate()
 //      val connectOptions = ConnectOptions.Builder(accessToken)
 //        .to(to)
 //        .build()
@@ -265,6 +272,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
 
       override fun onConnectFailure(call: Call, callException: CallException)  {
         Log.d(TAG, "Connect failure")
+        Log.d("sddssd", callException.message.toString())
         audioSwitch.deactivate()
         /*if (BuildConfig.playCustomRingback) {
           SoundPoolManager.getInstance(this).stopRinging()
@@ -350,7 +358,6 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
 
   override fun initialize(callback: (Result<Unit>) -> Unit) {
     Log.d("TAG", "This is context! 👉 " + this.context.toString())
-    audioSwitch = AudioSwitch(this.context)
     registerReceiver()
     callback(Result.success(Unit));
 //    registerCallInvites()
@@ -391,7 +398,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     if(permissionApprove) {
       print("Accept Permission")
 //      registerCallInvites()
-      joinCall(accessToken, "+14122754751")
+      joinCall(accessToken, "")
 
     } else {
       print("Denied Permission")
