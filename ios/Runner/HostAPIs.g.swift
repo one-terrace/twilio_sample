@@ -52,6 +52,9 @@ protocol TwilioBridgeHostApi {
   func deinitialize(completion: @escaping (Result<Void, Error>) -> Void)
   func toggleAudioRoute(toSpeaker: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
   func makeCall(token: String?, completion: @escaping (Result<MakeCallStatus, Error>) -> Void)
+  func hangUp(completion: @escaping (Result<Void, Error>) -> Void)
+  func muteUnmute(completion: @escaping (Result<Void, Error>) -> Void)
+  func changeAudioOutput(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -150,6 +153,51 @@ class TwilioBridgeHostApiSetup {
       }
     } else {
       makeCallChannel.setMessageHandler(nil)
+    }
+    let hangUpChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.hangUp", binaryMessenger: binaryMessenger)
+    if let api = api {
+      hangUpChannel.setMessageHandler { _, reply in
+        api.hangUp() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      hangUpChannel.setMessageHandler(nil)
+    }
+    let muteUnmuteChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.muteUnmute", binaryMessenger: binaryMessenger)
+    if let api = api {
+      muteUnmuteChannel.setMessageHandler { _, reply in
+        api.muteUnmute() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      muteUnmuteChannel.setMessageHandler(nil)
+    }
+    let changeAudioOutputChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.changeAudioOutput", binaryMessenger: binaryMessenger)
+    if let api = api {
+      changeAudioOutputChannel.setMessageHandler { _, reply in
+        api.changeAudioOutput() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      changeAudioOutputChannel.setMessageHandler(nil)
     }
   }
 }

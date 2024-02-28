@@ -22,7 +22,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
   final TwilioBridgeHostApi _api = TwilioBridgeHostApi();
   String language = '';
-  String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzZlYmUwYTI3MGE2ODI5YmI1NmRiNmRlYTM2ZmU1N2RhLTE3MDkwMTYyNDYiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJXb25kZXJmdWxVbHlzc2VzTmV2aXMiLCJ2b2ljZSI6eyJpbmNvbWluZyI6eyJhbGxvdyI6dHJ1ZX0sIm91dGdvaW5nIjp7ImFwcGxpY2F0aW9uX3NpZCI6IkFQNDZhNTk3ZjM1OGY4MzM3NTIxODJhMGU5YmExMzg4MDkifX19LCJpYXQiOjE3MDkwMTYyNDYsImV4cCI6MTcwOTAxOTg0NiwiaXNzIjoiU0s2ZWJlMGEyNzBhNjgyOWJiNTZkYjZkZWEzNmZlNTdkYSIsInN1YiI6IkFDMzhiZmYzZDk1ZDM0MjZkZTIyOWUzNmY5NDY5M2M3MTMifQ.r5N9xgzl3aM8PB_ZQBUDPQj2Ol0V3PfHuhifw0q9MHQ';
+  String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Y5YTljN2U2NTBkMmFlOGI2ZTE4MGRjMzA4ZjliZWQ3LTE3MDkxMzU2ODgiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJDcmVhdGl2ZUdyYWNpZVdhcnNhdyIsInZvaWNlIjp7ImluY29taW5nIjp7ImFsbG93Ijp0cnVlfSwib3V0Z29pbmciOnsiYXBwbGljYXRpb25fc2lkIjoiQVBkY2I1OGJkODYyOGU2NzQwZmNkNWE3MDRjMGNkYTZiMSJ9fX0sImlhdCI6MTcwOTEzNTY4OCwiZXhwIjoxNzA5MTM5Mjg4LCJpc3MiOiJTS2Y5YTljN2U2NTBkMmFlOGI2ZTE4MGRjMzA4ZjliZWQ3Iiwic3ViIjoiQUMxZDQ3YjAzODU0ODRjZGYzODAxZWY3MzdiM2FiZmI3YSJ9.f4_PuE8SYCbViNnLX9tVmmwE3W6Vq3SsMSdwDb2n2gI';
+  bool isCall = false;
   late TextEditingController _fcmTokenTxtFieldController;
 
   void initNotification() async {
@@ -98,13 +99,68 @@ class _MyAppState extends State<MyApp> implements TwilioBridgeFlutterApi {
 //
 //                     }
                       _api.makeCall(token).then((value) {
-                        debugPrint('${value}aung myin');
+                        setState(() {
+                          isCall = true;
+                        });
                       }).onError((error, stackTrace) {
                         debugPrint(error.toString());
                       });
                   },
                   child: const Text('Call me'),
-                )
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+//                     final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
+//                     Map<String, dynamic> body = jsonDecode(response.body);
+//                     final token = body["token"];
+//
+//                     if (response.statusCode == 200) {
+//
+//                     }
+                    await _api.muteUnmute().then((value) {
+                      print('mute lite unmute lite');
+                    }).onError((error, stackTrace) {
+                      debugPrint(error.toString());
+                    });
+                  },
+                  child: const Text('Mute/Unmute'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+//                     final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
+//                     Map<String, dynamic> body = jsonDecode(response.body);
+//                     final token = body["token"];
+//
+//                     if (response.statusCode == 200) {
+//
+//                     }
+                    await _api.hangUp().then((value) {
+                    }).onError((error, stackTrace) {
+                      debugPrint(error.toString());
+                    });
+                  },
+                  child: const Text('Hang Up'),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+//                     final response = await http.get(Uri.parse("https://twilio.oneterrace-tech.site/call-admin"));
+//                     Map<String, dynamic> body = jsonDecode(response.body);
+//                     final token = body["token"];
+//
+//                     if (response.statusCode == 200) {
+//
+//                     }
+                    await _api.changeAudioOutput().then((value) {
+                      print('change output');
+                    }).onError((error, stackTrace) {
+                      debugPrint(error.toString());
+                    });
+                  },
+                  child: const Text('Change audio output'),
+                ),
               ],
             ),
           ),

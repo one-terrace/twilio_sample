@@ -45,4 +45,13 @@ abstract class TwilioBridgeHostApi {
 
   @async
   MakeCallStatus makeCall(String? token);
+
+  @async
+  void hangUp();
+
+  @async
+  void muteUnmute();
+
+  @async
+  void changeAudioOutput();
 }

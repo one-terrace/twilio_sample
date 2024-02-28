@@ -69,7 +69,7 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
     private var ACTION_DTMF_SEND: String = "ACTION_DTMF_SEND"
     private var INCOMING_CALL_NOTIFICATION_ID: String = "INCOMING_CALL_NOTIFICATION_ID"
     private var DTMF: String = "DTMF"
-    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTSzZlYmUwYTI3MGE2ODI5YmI1NmRiNmRlYTM2ZmU1N2RhLTE3MDkwMTYyNDYiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJXb25kZXJmdWxVbHlzc2VzTmV2aXMiLCJ2b2ljZSI6eyJpbmNvbWluZyI6eyJhbGxvdyI6dHJ1ZX0sIm91dGdvaW5nIjp7ImFwcGxpY2F0aW9uX3NpZCI6IkFQNDZhNTk3ZjM1OGY4MzM3NTIxODJhMGU5YmExMzg4MDkifX19LCJpYXQiOjE3MDkwMTYyNDYsImV4cCI6MTcwOTAxOTg0NiwiaXNzIjoiU0s2ZWJlMGEyNzBhNjgyOWJiNTZkYjZkZWEzNmZlNTdkYSIsInN1YiI6IkFDMzhiZmYzZDk1ZDM0MjZkZTIyOWUzNmY5NDY5M2M3MTMifQ.r5N9xgzl3aM8PB_ZQBUDPQj2Ol0V3PfHuhifw0q9MHQ"
+    private var accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImN0eSI6InR3aWxpby1mcGE7dj0xIn0.eyJqdGkiOiJTS2Y5YTljN2U2NTBkMmFlOGI2ZTE4MGRjMzA4ZjliZWQ3LTE3MDkxMzU2ODgiLCJncmFudHMiOnsiaWRlbnRpdHkiOiJDcmVhdGl2ZUdyYWNpZVdhcnNhdyIsInZvaWNlIjp7ImluY29taW5nIjp7ImFsbG93Ijp0cnVlfSwib3V0Z29pbmciOnsiYXBwbGljYXRpb25fc2lkIjoiQVBkY2I1OGJkODYyOGU2NzQwZmNkNWE3MDRjMGNkYTZiMSJ9fX0sImlhdCI6MTcwOTEzNTY4OCwiZXhwIjoxNzA5MTM5Mjg4LCJpc3MiOiJTS2Y5YTljN2U2NTBkMmFlOGI2ZTE4MGRjMzA4ZjliZWQ3Iiwic3ViIjoiQUMxZDQ3YjAzODU0ODRjZGYzODAxZWY3MzdiM2FiZmI3YSJ9.f4_PuE8SYCbViNnLX9tVmmwE3W6Vq3SsMSdwDb2n2gI"
   }
   override fun getLanguage(): String {
     return "Android"
@@ -374,6 +374,30 @@ private class TwilioBridgeHostApiImplementation(val context: Context, val activi
 
   override fun makeCall(token: String?, callback: (Result<MakeCallStatus>) -> Unit) {
     permissionHandle()
+  }
+
+  override fun hangUp(callback: (Result<Unit>) -> Unit) {
+    if(activeCall != null) {
+      activeCall!!.disconnect()
+    }
+  }
+
+  override fun muteUnmute(callback: (Result<Unit>) -> Unit) {
+    if(activeCall != null) {
+      if(activeCall!!.isMuted) {
+        activeCall!!.mute(false)
+      } else {
+        activeCall!!.mute(true)
+      }
+    }
+  }
+
+  override fun changeAudioOutput(callback: (Result<Unit>) -> Unit) {
+    val selectedDevice: AudioDevice? = audioSwitch.selectedAudioDevice
+    val availableAudioDevices: List<AudioDevice> = audioSwitch.availableAudioDevices
+    Log.d("asdf", availableAudioDevices.toString())
+    audioSwitch.selectDevice(availableAudioDevices[1])
+    audioSwitch.activate()
   }
 
   fun providePermission() : ArrayList<String> {

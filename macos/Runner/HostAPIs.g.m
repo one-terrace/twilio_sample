@@ -151,4 +151,55 @@ void SetUpPGNTwilioBridgeHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSO
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.hangUp"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(hangUpWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(hangUpWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api hangUpWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.muteUnmute"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(muteUnmuteWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(muteUnmuteWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api muteUnmuteWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.changeAudioOutput"
+        binaryMessenger:binaryMessenger
+        codec:PGNTwilioBridgeHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(changeAudioOutputWithCompletion:)], @"PGNTwilioBridgeHostApi api (%@) doesn't respond to @selector(changeAudioOutputWithCompletion:)", api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api changeAudioOutputWithCompletion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }

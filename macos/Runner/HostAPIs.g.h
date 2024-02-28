@@ -34,6 +34,9 @@ NSObject<FlutterMessageCodec> *PGNTwilioBridgeHostApiGetCodec(void);
 - (void)deinitializeWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)toggleAudioRouteToSpeaker:(BOOL)toSpeaker completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)makeCallToken:(nullable NSString *)token completion:(void (^)(PGNPGNMakeCallStatusBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)hangUpWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)muteUnmuteWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)changeAudioOutputWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpPGNTwilioBridgeHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PGNTwilioBridgeHostApi> *_Nullable api);

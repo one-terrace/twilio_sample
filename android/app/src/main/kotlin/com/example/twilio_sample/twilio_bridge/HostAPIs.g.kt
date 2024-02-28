@@ -62,6 +62,9 @@ interface TwilioBridgeHostApi {
   fun deinitialize(callback: (Result<Unit>) -> Unit)
   fun toggleAudioRoute(toSpeaker: Boolean, callback: (Result<Boolean>) -> Unit)
   fun makeCall(token: String?, callback: (Result<MakeCallStatus>) -> Unit)
+  fun hangUp(callback: (Result<Unit>) -> Unit)
+  fun muteUnmute(callback: (Result<Unit>) -> Unit)
+  fun changeAudioOutput(callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by TwilioBridgeHostApi. */
@@ -172,6 +175,57 @@ interface TwilioBridgeHostApi {
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data!!.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.hangUp", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.hangUp() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.muteUnmute", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.muteUnmute() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.twilio_sample.TwilioBridgeHostApi.changeAudioOutput", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.changeAudioOutput() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
               }
             }
           }
